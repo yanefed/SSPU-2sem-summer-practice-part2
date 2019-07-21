@@ -1,0 +1,480 @@
+package ru.fait.plotdrawer;
+
+import java.awt.Color;
+import java.awt.Graphics;
+import java.util.Arrays;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JPanel;
+import javax.swing.border.Border;
+
+/**
+ *
+ * @author Богатырев Иван
+ */
+public class Main extends javax.swing.JFrame {
+
+    Panel canvasPanel;
+
+    double xMin = -10;
+    double xMax = 3;
+    double yMin = -4;
+    double yMax = 3;
+    double stepX = 2.5;
+    double stepY = 1.3;
+
+    class Panel extends JPanel {
+
+        Border border;
+
+        public Panel() {
+            border = jPanel1.getBorder();
+            this.setBounds(0, 0, Main.getFrames()[0].getWidth() - jPanel1.getWidth(), jPanel1.getHeight());
+            this.setBorder(border);
+        }
+
+        @Override
+        public void paintComponent(Graphics g) {
+            super.paintComponent(g);
+            this.setBorder(border);
+            
+            double xRatio = getWidth() / (xMax - xMin);
+            double yRatio = (getHeight()) / (yMax - yMin);
+
+            int xMid = (int) (xMin * xRatio) + (getWidth() / 2);
+            int yMid = (int) (yMin * yRatio) + (getHeight() / 2);
+
+            int height = super.getHeight();
+            int width = super.getWidth();
+            this.setBounds(0, 0, Main.getFrames()[0].getWidth() - jPanel1.getWidth() - 15, jPanel1.getHeight());
+
+            // оси координат
+            g.drawLine(width, (height / 2) + yMid, 0, (height / 2) + yMid);
+            g.drawLine((width / 2) - xMid, height, (width / 2) - xMid, 0);
+            g.setColor(Color.BLUE);
+
+            // деление шкалы по оси y
+            if (stepY != 0) {
+                for (double i = stepY, j = -stepY; i <= yMax || j >= yMin; i += stepY, j -= stepY) {
+                    g.drawString(Double.toString(i), getWidth() / 2 - xMid, (getHeight() / 2) - (int) (i * yRatio) + yMid);
+                    g.drawString(Double.toString(j), getWidth() / 2 - xMid, (getHeight() / 2) - (int) (j * yRatio) + yMid);
+                }
+            }
+
+            // деление шкалы по оси x
+            if (stepX != 0) {
+                for (double i = 0, j = -stepX; i <= xMax || j >= xMin; i += stepX, j -= stepX) {
+                    if ((getHeight() / 2) + yMid < getHeight() - 30 && (getHeight() / 2) + yMid > 30) {
+                        g.drawString(Double.toString(i), getWidth() / 2 + (int) (i * xRatio) - xMid - 20, (getHeight() / 2) + yMid);
+                        g.drawString(Double.toString(j), getWidth() / 2 + (int) (j * xRatio) - xMid, (getHeight() / 2) + yMid);
+                    }
+                }
+            }
+
+            int[] xPoints = new int[(int) ((xMax - xMin) / 0.1) + 1];
+            int[] yPoints = new int[(int) ((xMax - xMin) / 0.1) + 1];
+
+            // первый график
+            if (jComboBox1.getSelectedIndex() == 0) {
+                g.setColor(Color.red);
+                for (double j = xMin, i = 0; j <= xMax; j += 0.1, i++) {
+                    try {
+                        xPoints[(int) (i)] = (int) (j * xRatio) + (getWidth() / 2) - xMid;
+                        yPoints[(int) (i)] = (int) ((-(Math.sin(j))) * yRatio + ((getHeight()) / 2)) + yMid;
+                    } catch (Exception e) {
+                        Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, e);
+                    }
+                }
+                g.drawPolyline(xPoints, yPoints, (int) ((xMax - xMin) / 0.1) + 1);
+            }
+
+            // второй график
+            int lim = (int) xMax;
+            if (jComboBox1.getSelectedIndex() == 1) {
+                g.setColor(Color.red);
+                for (double j = xMin, i = 0; j <= 0.1; j += 0.1, i++) {
+                    try {
+                        xPoints[(int) i] = (int) (j * xRatio) + (getWidth() / 2) - xMid;
+                        yPoints[(int) i] = (int) (-(Math.sqrt(-2 * j)) * yRatio + ((getHeight()) / 2)) + yMid;
+                        lim = (int) i;
+                    } catch (Exception e) {
+                    }
+                }
+                int[] xPoints2 = Arrays.copyOfRange(xPoints, (int) 0, (int) lim);
+                int[] yPoints2 = Arrays.copyOfRange(yPoints, (int) 0, (int) lim);
+                g.drawPolyline(xPoints2, yPoints2, xPoints2.length);
+            }
+        }
+    }
+
+    public Main() {
+        initComponents();
+        this.setBounds(0, 0, 500, 500);
+        jPanel1.setBounds(getWidth() - 11, 22, 100, getHeight());
+
+        DefaultComboBoxModel dcm = new DefaultComboBoxModel();
+        dcm.addElement("sin(x)");
+        dcm.addElement("dFx = dy");
+
+        jComboBox1.setModel(dcm);
+        canvasPanel = new Panel();
+        this.add(canvasPanel);
+        canvasPanel.setBackground(Color.white);
+    }
+
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        jPanel1 = new javax.swing.JPanel();
+        jLabel5 = new javax.swing.JLabel();
+        yMinField = new javax.swing.JTextField();
+        yMaxField = new javax.swing.JTextField();
+        jLabel6 = new javax.swing.JLabel();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel7 = new javax.swing.JLabel();
+        jComboBox1 = new javax.swing.JComboBox<>();
+        jLabel8 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        xStepField = new javax.swing.JTextField();
+        xMinField = new javax.swing.JTextField();
+        yStepField = new javax.swing.JTextField();
+        jLabel3 = new javax.swing.JLabel();
+        xMaxField = new javax.swing.JTextField();
+        jLabel4 = new javax.swing.JLabel();
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
+        jPanel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        jPanel1.setToolTipText("");
+
+        jLabel5.setText("max y:");
+        jLabel5.setToolTipText("");
+
+        yMinField.addCaretListener(new javax.swing.event.CaretListener() {
+            public void caretUpdate(javax.swing.event.CaretEvent evt) {
+                yMinFieldCaretUpdate(evt);
+            }
+        });
+        yMinField.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                yMinFieldPropertyChange(evt);
+            }
+        });
+
+        yMaxField.addCaretListener(new javax.swing.event.CaretListener() {
+            public void caretUpdate(javax.swing.event.CaretEvent evt) {
+                yMaxFieldCaretUpdate(evt);
+            }
+        });
+        yMaxField.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                yMaxFieldPropertyChange(evt);
+            }
+        });
+
+        jLabel6.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel6.setText("Оси");
+
+        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel1.setText("Функция");
+
+        jLabel7.setText("Шаг по y:");
+
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        jComboBox1.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                jComboBox1ItemStateChanged(evt);
+            }
+        });
+
+        jLabel8.setText("Шаг по x:");
+
+        jLabel2.setText("min x:");
+        jLabel2.setToolTipText("");
+
+        xStepField.addCaretListener(new javax.swing.event.CaretListener() {
+            public void caretUpdate(javax.swing.event.CaretEvent evt) {
+                xStepFieldCaretUpdate(evt);
+            }
+        });
+        xStepField.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                xStepFieldPropertyChange(evt);
+            }
+        });
+
+        xMinField.addCaretListener(new javax.swing.event.CaretListener() {
+            public void caretUpdate(javax.swing.event.CaretEvent evt) {
+                xMinFieldCaretUpdate(evt);
+            }
+        });
+        xMinField.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                xMinFieldPropertyChange(evt);
+            }
+        });
+
+        yStepField.addCaretListener(new javax.swing.event.CaretListener() {
+            public void caretUpdate(javax.swing.event.CaretEvent evt) {
+                yStepFieldCaretUpdate(evt);
+            }
+        });
+        yStepField.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                yStepFieldPropertyChange(evt);
+            }
+        });
+
+        jLabel3.setText("max x:");
+        jLabel3.setToolTipText("");
+
+        xMaxField.addCaretListener(new javax.swing.event.CaretListener() {
+            public void caretUpdate(javax.swing.event.CaretEvent evt) {
+                xMaxFieldCaretUpdate(evt);
+            }
+        });
+        xMaxField.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                xMaxFieldPropertyChange(evt);
+            }
+        });
+
+        jLabel4.setText("min y:");
+        jLabel4.setToolTipText("");
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jComboBox1, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(9, 9, 9)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(jLabel4)
+                                    .addComponent(jLabel5)
+                                    .addComponent(jLabel3)
+                                    .addComponent(jLabel2))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(yMinField, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 102, Short.MAX_VALUE)
+                                    .addComponent(xMaxField, javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(xMinField, javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(yMaxField)))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel8)
+                                    .addComponent(jLabel7, javax.swing.GroupLayout.Alignment.TRAILING))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(yStepField, javax.swing.GroupLayout.DEFAULT_SIZE, 98, Short.MAX_VALUE)
+                                    .addComponent(xStepField))))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(jLabel6, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel2)
+                    .addComponent(xMinField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel3)
+                    .addComponent(xMaxField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel4)
+                    .addComponent(yMinField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel5)
+                    .addComponent(yMaxField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jLabel6)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel7)
+                    .addComponent(yStepField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(11, 11, 11)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel8)
+                    .addComponent(xStepField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(148, Short.MAX_VALUE))
+        );
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGap(0, 428, Short.MAX_VALUE)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+
+        pack();
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void yMinFieldCaretUpdate(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_yMinFieldCaretUpdate
+        try {
+            yMin = Double.parseDouble(yMinField.getText());
+            canvasPanel.repaint();
+
+        } catch (Exception ex) {
+            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_yMinFieldCaretUpdate
+
+    private void yMinFieldPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_yMinFieldPropertyChange
+        yMinField.setText(Double.toString(yMin));
+    }//GEN-LAST:event_yMinFieldPropertyChange
+
+    private void yMaxFieldCaretUpdate(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_yMaxFieldCaretUpdate
+        try {
+            yMax = Double.parseDouble(yMaxField.getText());
+            canvasPanel.repaint();
+
+        } catch (Exception ex) {
+
+        }
+    }//GEN-LAST:event_yMaxFieldCaretUpdate
+
+    private void yMaxFieldPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_yMaxFieldPropertyChange
+        yMaxField.setText(Double.toString(yMax));
+    }//GEN-LAST:event_yMaxFieldPropertyChange
+
+    private void jComboBox1ItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_jComboBox1ItemStateChanged
+        canvasPanel.repaint();
+    }//GEN-LAST:event_jComboBox1ItemStateChanged
+
+    private void xStepFieldCaretUpdate(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_xStepFieldCaretUpdate
+        try {
+
+            stepX = Double.parseDouble(xStepField.getText());
+            canvasPanel.repaint();
+
+        } catch (Exception ex) {
+            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_xStepFieldCaretUpdate
+
+    private void xStepFieldPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_xStepFieldPropertyChange
+        xStepField.setText(Double.toString(stepX));
+    }//GEN-LAST:event_xStepFieldPropertyChange
+
+    private void xMinFieldCaretUpdate(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_xMinFieldCaretUpdate
+        try {
+
+            xMin = Double.parseDouble(xMinField.getText());
+            canvasPanel.repaint();
+
+        } catch (Exception ex) {
+            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_xMinFieldCaretUpdate
+
+    private void xMinFieldPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_xMinFieldPropertyChange
+        xMinField.setText(Double.toString(xMin));
+    }//GEN-LAST:event_xMinFieldPropertyChange
+
+    private void yStepFieldCaretUpdate(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_yStepFieldCaretUpdate
+        try {
+            stepY = Double.parseDouble(yStepField.getText());
+            canvasPanel.repaint();
+        } catch (Exception ex) {
+        }
+    }//GEN-LAST:event_yStepFieldCaretUpdate
+
+    private void yStepFieldPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_yStepFieldPropertyChange
+        yStepField.setText(Double.toString(stepY));
+    }//GEN-LAST:event_yStepFieldPropertyChange
+
+    private void xMaxFieldCaretUpdate(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_xMaxFieldCaretUpdate
+        try {
+            xMax = Double.parseDouble(xMaxField.getText());
+            canvasPanel.repaint();
+        } catch (Exception ex) {
+            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_xMaxFieldCaretUpdate
+
+    private void xMaxFieldPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_xMaxFieldPropertyChange
+        xMaxField.setText(Double.toString(xMax));
+    }//GEN-LAST:event_xMaxFieldPropertyChange
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String args[]) {
+        /* Set the Nimbus look and feel */
+        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         */
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(Main.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(Main.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(Main.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(Main.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        //</editor-fold>
+
+        /* Create and display the form */
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new Main().setVisible(true);
+            }
+        });
+    }
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JComboBox<String> jComboBox1;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JTextField xMaxField;
+    private javax.swing.JTextField xMinField;
+    private javax.swing.JTextField xStepField;
+    private javax.swing.JTextField yMaxField;
+    private javax.swing.JTextField yMinField;
+    private javax.swing.JTextField yStepField;
+    // End of variables declaration//GEN-END:variables
+}
